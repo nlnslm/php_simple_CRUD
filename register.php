@@ -127,6 +127,8 @@
 				</fieldset>
 			</form>
 			<!--3.display message -->
+			<span class="text-success"><?php if(isset($success_message)) echo $success_message; ?></span>
+			<span class="text-danger"><?php if(isset($error_message)) echo $error_message; ?></span>
 
 		</div>
 	</div>
