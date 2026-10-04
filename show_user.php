@@ -1,11 +1,30 @@
 <?php
-    //9.fetch and delete record
+    //9.ดึงและลบ record
     include_once 'dbconnect.php';
 
-    // fetch records
+    // เริ่ม session
+    session_strat();
 
-    // delete record
+    if (!isset($_SESSION['session_admin_name'])) {
+        // เปลี่ยนเส้นทางไปที่หน้า login สำหรับผู้ดูแลระบบ ถ้ายังไม่ได้เข้าสู่ระบบในฐานะ admin
+        header("Location: admin_login_php");
+        exit();
+    }
 
+    //9.1) ดึง records
+    $SQL = "SELECT * FROM users ORDER BY user_id DESC";
+    $result = mysqli_query($conn, $SQL);
+
+    //9.2) ลบ record
+    // เช็คว่ามีการกำหนดพารามิเตอร์ 'id' ใน URL ไหม
+    if(isset($_GET['id'])) {
+        $get_user_id = intval($_GET['id']);
+        $SQL = "DELETE FROM users WHERE user_id-" . $get_user_id;
+        mysqli_query($conn, $SQL);
+        // เปลี่ยนเส้นทางไปที่หน้า show_user.php หลังจากลบข้อมูล
+        header("Location: show_user.php");
+        exit();
+    }
  ?>
 
  <!DOCTYPE html>

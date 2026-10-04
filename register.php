@@ -1,24 +1,28 @@
 <?php
-	//2.save regist info into database
+	//2. save regist info into database
 
-	// เชื่อมต่อฐานข้อมูล
+	//2.1) เชื่อมต่อฐานข้อมูล
 	include_once 'dbconnect.php';
 
-	// ตรวจสอบว่ามีการส่งข้อมูลมาหรือไม่
+	//2.2) ตรวจสอบว่ามีการส่งแบบฟอร์มแล้ว
+	$err_flag = false;
+
+	//2.3) ตรวจสอบว่ามีการส่งข้อมูลมาหรือไม่
 	if(isset($_POST['signup'])) {
 		$name = $_POST['user-name'];
 		$email = $_POST['user-email'];
 		$password = $_POST['user-password'];
 		$cpassword = $_POST['user-cpassword']; // ใช้ยืนยันรหัสผ่าน (ไม่ต้อง insert ลง database)
 
+		//2.4) ตรวจสอบความถูกต้องของข้อมูลในแบบฟอร์ม (validate form inputs)
 		// ตรวจสอบว่ารหัสผ่านตรงกันหรือไม่
-		if ($password != $cpassword) {
+		if($password != $cpassword) {
 			$cpassword_error = "Passwords do not match.";
 			$err_flag = true;
 		}
 
-		// ตรวจสอบรูปแบบอีเมล
-		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		// ตรวจสอบรูปแบบอีเมล (validate email format)
+		if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$email_error = "Invalid email format.";
 			$err_flag = true;
 		}
@@ -29,28 +33,32 @@
 			$err_flag = true;
 		}
 
+		// ตรวจสอบว่าชื่อประกอบด้วยตัวอักษรและช่องว่างเท่านั้นไหม (validate name only contains letters and whitespace)
+		if(!preg_match("/^[a-zA-Z]*$", $name)) {
+			$name_error = "Only letters and whitespace allowed in name.";
+			$err_flag = true;
+		}
+
 		// ตรวจสอบว่ารหัสผ่านมีตัวอักษรพิมพ์ใหญ่หรือไม่
-		if (!preg_match('/[A-Z]/', $password)) {
+		if(!preg_match('/[A-Z]/', $password)) {
 			$password_error = "Password must contain at least one uppercase letter.";
 			$err_flag = true;
 		}
 
-		// 2.5 ถ้าไม่มีข้อผิดพลาด ให้ทำการบันทึกข้อมูลลงในฐานข้อมูล
-		if(!err_flag) {
+		//2.5) ถ้าไม่มีข้อผิดพลาด ให้ทำการบันทึกข้อมูลลงในฐานข้อมูล
+		if(!$err_flag) {
 			$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 			//$hashed_password = md5($password); // กรณีใช้ md5 แทน password_hash
-			$SQL = "INSERT INTO users (user_name, user_email, user_password) VALUES ('$name', '$email', '$hashed_password')";
+			$SQL = "INSERT INTO users (user_name, user_email, user_password, user_type) 
+					VALUES ('$name', '$email', '$hashed_password', 'U')";
 			// แสดงความสำเร็จหรือข้อผิดพลาดในการบันทึกข้อมูล
 			if(mysqli_query($conn, $SQL)) {
 				$success_message = "Registration successful!";
 			} else {
 				$error_message = "Error: " . mysqli_error($conn);
 			}
-		} else {
-
 		}
 	}
-
 ?>
 
 <!DOCTYPE html>
@@ -129,9 +137,9 @@
 			<!--3.display message -->
 			<span class="text-success"><?php if(isset($success_message)) echo $success_message; ?></span>
 			<span class="text-danger"><?php if(isset($error_message)) echo $error_message; ?></span>
-
 		</div>
 	</div>
+
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4 text-center">
 		Already Registered? <a href="login.php">Login Here</a>

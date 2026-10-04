@@ -1,5 +1,35 @@
 <?php
-		//4.check login info from users table
+	//4. เช็คข้อมูลการเข้าสู่ระบบจากตาราง users (check login info users table)
+
+	//4.1) เชื่อมต่อฐานข้อมูล
+	include_once 'dbconnect.php';
+
+	//4.2) ตรวจสอบว่ามีการส่งแบบฟอร์มแล้ว
+	if(isset($_POST['login'])) {
+		//4.3) กำหนดค่าเริ่มต้นให้ตัวแปร (initialize variables)
+		//4.4) ตรวจสอบและทำความสะอาดข้อมูลที่รับมาจากผู้ใช้ เพื่อป้องกันการโจมตีแบบ SQL Injection (sanitize user inputs, prevent SQL injection)
+		$user_email = mysqli_real_escape_string($conn, $_POST['user-email']);
+		$user_password = mysqli_real_escape_string($conn, $_POST['user-password']);
+
+		//4.5) เช็คว่ามีผู้ใช้อยู่ในฐานข้อมูลไหม (check if user exists in database)
+		$SQL = "SELECT * FROM users WHERE user_email='$user_email' AND user_password=" . md5($user_password) . "";
+		// ดำเนินการ query (execute the query)
+		$result = mysqli_query($conn, $SQL);
+
+		//4.6) ถ้ามีผู้ใช้อยู่จริง ให้เริ่ม session และเปลี่ยนเส้นทางไปยัง index.php
+		// แปลง Result Set เป็น Array และตรวจสอบว่ามีข้อมูลแถว (row) อยู่ไหม
+		if($row = mysqli_query($conn, $SQL)) {
+			// ถ้ามีผู้ใช้อยู่ในระบบ ให้เริ่ม session
+			session_start();
+			$_SESSION['session_user_id'] = $row['user_id'];
+			$_SESSION['session_user_name'] = $row['user_name'];
+			// เปลี่ยนเส้นทางไปที่ index.php
+			header("Location: index.php");
+			exit();
+		} else {
+			$login_error = "Invalid email or password.";
+		}
+	}
 
 ?>
 
@@ -57,7 +87,13 @@
 					</div>
 				</fieldset>
 			</form>
+
 			<!--5.display message -->
+			<span class="text-danger">
+				<?php
+					if(isset($login_error))
+						echo $login_error;
+				?>
 
 		</div>
 	</div>

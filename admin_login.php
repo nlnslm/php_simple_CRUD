@@ -1,6 +1,33 @@
 <?php
-		//7.check admin username and password, set admin name as "admin" and password as "pass1234"
+	//7. check admin username and password, set admin name as "admin" and password as "pass1234"
 
+	//7.1) เชื่อมต่อฐานข้อมูล
+	include_once 'dbconnect.php';
+
+	//7.2) ตรวจสอบว่ามีการส่งแบบฟอร์มแล้ว
+	if(isset($_POST['login'])) {
+		//7.3) กำหนดค่าเริ่มต้นให้ตัวแปร (intialize variables)
+		$admin_name = mysqli_real_escape_string($conn, $_POST['admin-name']);
+		$admin_password = mysqli_real_escape_string($conn, $_POST['admin-password']);
+
+		//7.4) เช็คว่ามี admin อยู่ในฐานข้อมูลไหม
+		$SQL = "SELECT * FROM users WHERE user_name='$admin_name' 
+		AND user_password=" . md5($admin_password) . " AND user_type='A'";
+		// ดำเนินการ query (exercute the query)
+		$result = mysqli_query($conn, $SQL);
+
+		//7.5) ถ้ามี admin อยู่จริง ให้เริ่ม session และเปลี่ยนเส้นทางไปที่ show_user.php
+		if(mysqli_num_rows($result) == 1) {
+			// เริ่ม session ถ้ามี admin อยู่
+			session_start();
+			$_SESSION['session_admin_name'] = $admin_name;
+			// เปลี่ยนเส้นทางไปที่ show_user.php
+			header("Location: show_user.php");
+			exit();
+		} else {
+			$login_error = "Invalid admin name or password.";
+		}
+	}
 ?>
 
 <!DOCTYPE html>
