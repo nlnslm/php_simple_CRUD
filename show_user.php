@@ -75,17 +75,48 @@
                      </tr>
                  </thead>
                  <tbody>
-                <!--10.show all users in this part of table -->
 
+                <!--10.show all users in this part of table -->
+                <?php while($row = mysqli_fetch_array($result)) { ?>
+                    <tr>
+                        <td><?php echo $row['user_id']; ?></td>
+                        <td><?php echo $row['user_name']; ?></td>
+                        <td><?php echo $row['user_email']; ?></td>
+                        <td><?php echo $row['user_password']; ?></td>
+                        <td>
+                            <?php
+                                if($row['user_type' == 'U']) {
+                                    echo "User";
+                                } elseif($row['user_type' == 'A']) {
+                                    echo "Admin";
+                                }
+                            ?>
+                        </td>
+                        <td><a href="update_user.php?id=<?php echo $row['user_id']; ?>" class="btn btn-info">Edit</a></td>
+                        <td><input type="button" value="Delete" class="btn btn-danger" onclick="deleteUser(<?php echo $row['user_id']; ?>)" /></td>
+                    </tr>
+                <?php } ?>
                  </tbody>
              </table>
             </div>
-            <!--12.display number of records -->
 
+            <!--12.display number of records -->
+            <div class="panel-footer">
+                <?php
+                    $num_rows = mysqli_num_rows($result);
+                    echo "<p>Total Users: " . $num_rows . "</p>";
+                ?>
+            </div>
          </div>
      </div>
  </div>
+ 
  <!--11.JavaScript for edit and delete actions -->
-
+ <script>
+    function deleteUser(userId) {
+        if(confirm("Are you sure you want to delete this user?")) {
+            window.location.href = "show_user.php?id=" + userId;
+        }
+    }
  </body>
  </html>
