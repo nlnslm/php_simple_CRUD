@@ -1,5 +1,5 @@
 <?php
-    //1. เชื่อมต่อฐานข้อมูล MySQL
+    //1. เชื่อม php เข้ากับฐานข้อมูล MySQL
     $host = "localhost";
     $user = "root";
     $password = "";
