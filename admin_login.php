@@ -1,11 +1,10 @@
 <?php
 	//7. check admin username and password, set admin name as "admin" and password as "pass1234"
-
 	//7.1) เชื่อมต่อฐานข้อมูล
 	include_once 'dbconnect.php';
 
 	//7.2) ตรวจสอบว่ามีการส่งแบบฟอร์มแล้ว
-	if(isset($_POST['login'])) {
+	if(isset($_POST['login'])) { // isset() ใช้ตรวจสอบว่ามีการกดปุ่มชื่อ ['...'] ไหม
 		//7.3) กำหนดค่าเริ่มต้นให้ตัวแปร (intialize variables)
 		$admin_name = mysqli_real_escape_string($conn, $_POST['admin-name']);
 		$admin_password = mysqli_real_escape_string($conn, $_POST['admin-password']);
@@ -85,7 +84,11 @@
 				</fieldset>
 			</form>
 			<!--8.display message -->
-			
+			<?php if(isset($login_error)) { ?>
+				<div class="alert alert-danger">
+					<?php echo $login_error; ?>
+				</div>
+			<?php }	?>
 		</div>
 	</div>
 </div>
