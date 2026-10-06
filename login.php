@@ -12,7 +12,7 @@
 		$user_password = mysqli_real_escape_string($conn, $_POST['user-password']);
 
 		//4.5) เช็คว่ามีผู้ใช้อยู่ในฐานข้อมูลไหม (check if user exists in database)
-		$SQL = "SELECT * FROM users WHERE user_email='$user_email' AND user_password=" . md5($user_password) . "";
+		$SQL = "SELECT * FROM users WHERE user_email='$user_email' AND user_password='" . md5($user_password) . "'";
 		// ดำเนินการ query (execute the query)
 		$result = mysqli_query($conn, $SQL);
 
@@ -73,13 +73,13 @@
 					<legend>Login</legend>
 
 					<div class="form-group">
-						<label for="name">Email</label>
+						<label for="user-email">Email</label>
 						<input type="text" name="email" placeholder="Your Email" required class="form-control" />
 					</div>
 
 					<div class="form-group">
-						<label for="name">Password</label>
-						<input type="password" name="password" placeholder="Your Password" required class="form-control" />
+						<label for="user-password">Password</label>
+						<input type="password" name="user-password" placeholder="Your Password" required class="form-control" />
 					</div>
 
 					<div class="form-group">
