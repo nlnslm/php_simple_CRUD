@@ -15,9 +15,9 @@
 		$cpassword = $_POST['user-cpassword']; // ใช้ยืนยันรหัสผ่าน (ไม่ต้อง insert ลง database)
 
 		//2.4) ตรวจสอบความถูกต้องของข้อมูลในแบบฟอร์ม (validate form inputs)
-		// ตรวจสอบว่ารหัสผ่านตรงกันหรือไม่
-		if($password != $cpassword) {
-			$cpassword_error = "Passwords do not match.";
+		// ตรวจสอบว่าชื่อประกอบด้วยตัวอักษรและช่องว่างเท่านั้นไหม (validate name only contains letters and whitespace)
+		if(!preg_match("/^[a-zA-Z\s]+$/", $name)) {
+			$name_error = "Only letters and whitespace allowed in name.";
 			$err_flag = true;
 		}
 
@@ -27,21 +27,21 @@
 			$err_flag = true;
 		}
 
+		// ตรวจสอบว่ารหัสผ่านมีตัวอักษรพิมพ์ใหญ่หรือไม่
+		if(!preg_match('/[A-Z]/', $password)) {
+			$password_error = "Password must contain at least one uppercase letter.";
+			$err_flag = true;
+		}
+
 		// ตรวจสอบความยาวของรหัสผ่าน
 		if(strlen($password) < 6) {
 			$password_error = "Password must be at least 6 characters long.";
 			$err_flag = true;
 		}
 
-		// ตรวจสอบว่าชื่อประกอบด้วยตัวอักษรและช่องว่างเท่านั้นไหม (validate name only contains letters and whitespace)
-		if(!preg_match("/^[a-zA-Z]*$", $name)) {
-			$name_error = "Only letters and whitespace allowed in name.";
-			$err_flag = true;
-		}
-
-		// ตรวจสอบว่ารหัสผ่านมีตัวอักษรพิมพ์ใหญ่หรือไม่
-		if(!preg_match('/[A-Z]/', $password)) {
-			$password_error = "Password must contain at least one uppercase letter.";
+		// ตรวจสอบว่ารหัสผ่านตรงกันหรือไม่
+		if($password != $cpassword) {
+			$cpassword_error = "Passwords do not match.";
 			$err_flag = true;
 		}
 
@@ -102,29 +102,29 @@
 					<legend>Sign Up</legend>
 
 					<div class="form-group">
-						<label for="name">Name</label>
-						<input type="text" name="name" placeholder="Enter Full Name" required value="" class="form-control" />
+						<label for="user-name">Name</label>
+						<input type="text" name="user-name" placeholder="Enter Full Name" required value="" class="form-control" />
 						<!-- แสดงข้อความผิดพลาด ถ้ามี -->
 						<span class="text-danger"><?php if(isset($name_error)) echo $name_error; ?></span>
 					</div>
 
 					<div class="form-group">
-						<label for="name">Email</label>
-						<input type="text" name="email" placeholder="Email" required value="" class="form-control" />
+						<label for="user-email">Email</label>
+						<input type="text" name="user-email" placeholder="Email" required value="" class="form-control" />
 						<!-- แสดงข้อความผิดพลาด ถ้ามี -->
 						<span class="text-danger"><?php if(isset($email_error)) echo $email_error; ?></span>
 					</div>
 
 					<div class="form-group">
-						<label for="name">Password</label>
-						<input type="password" name="password" placeholder="Password" required class="form-control" />
+						<label for="user-password">Password</label>
+						<input type="password" name="user-password" placeholder="Password" required class="form-control" />
 						<!-- แสดงข้อความผิดพลาด ถ้ามี -->
 						<span class="text-danger"><?php if(isset($password_error)) echo $password_error; ?></span>
 					</div>
 
 					<div class="form-group">
-						<label for="name">Confirm Password</label>
-						<input type="password" name="cpassword" placeholder="Confirm Password" required class="form-control" />
+						<label for="user-cpassword">Confirm Password</label>
+						<input type="password" name="user-cpassword" placeholder="Confirm Password" required class="form-control" />
 						<!-- แสดงข้อความผิดพลาด ถ้ามี -->
 						<span class="text-danger"><?php if(isset($cpassword_error)) echo $cpassword_error; ?></span>
 					</div>
