@@ -12,4 +12,18 @@
 		header("Location: login.php");
 		exit();
 	}
+
+	// เช็คว่า admin ได้ login หรือยัง (check if the admin is logged in)
+    if(isset($_SESSION['session_admin_name'])) {
+        // Destroy the session and redirect to admin login page
+        session_destroy();
+        unset($_SESSION['session_admin_name']);
+        header("Location: admin_login.php");
+        exit();
+    }
+
+    // Default fallback
+    session_destroy();
+    header("Location: login.php");
+    exit();
 ?>

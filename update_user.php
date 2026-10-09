@@ -2,7 +2,14 @@
 	//13. แสดงข้อมูลเดิมของผู้ใช้ในฟอร์มแก้ไข
     include_once 'dbconnect.php';
 
-	// 
+	// เริ่ม session และตรวจสอบสิทธิ์ผู้ดูแลระบบ
+    session_start();
+    if(!isset($_SESSION['session_admin_name'])) {
+        header("Location: admin_login.php");
+        exit();
+    }
+
+	// ดึงข้อมูลผู้ใช้จากฐานข้อมูล
 	if(isset($_GET['id'])) {
         $get_user_id = intval($_GET['id']);
         $SQL = "SELECT * FROM users WHERE user_id=" . $get_user_id;
@@ -20,7 +27,17 @@
         exit();
     }
 
-	//13.1) อัปเดตข้อมูลผู้ใช้
+	$err_flag = false;
+
+    // ดึง user id จาก GET หรือ POST
+    $get_user_id = 0;
+    if(isset($_GET['id'])) {
+        $get_user_id = intval($_GET['id']);
+    } elseif(isset($_POST['user-id-update'])) {
+        $get_user_id = intval($_POST['user-id-update']);
+    }
+
+	//13.2) อัปเดตข้อมูลผู้ใช้
     if(isset($_POST['update'])) {
         $get_user_id = intval($_POST['user-id-update']);
         $user_name = mysqli_real_escape_string($conn, trim($_POST['user-name-update']));
@@ -111,23 +128,23 @@
 					<!--14.display old info in text field -->
 					<div class="form-group">
 						<input type="hidden" name="id" value="" />
-						<label for="name">Name</label>
-						<input type="text" name="name" placeholder="Enter Full Name" required value="" class="form-control" />
+						<label for="user-name-update">Name</label>
+						<input type="text" name="user-name-update" placeholder="Enter Full Name" required value="" class="form-control" />
 					</div>
 
 					<div class="form-group">
-						<label for="name">Email</label>
-						<input type="text" name="email" placeholder="Email" required value="" class="form-control" />
+						<label for="user-email-update">Email</label>
+						<input type="text" name="user-email-update" placeholder="Email" required value="" class="form-control" />
 					</div>
 
 					<div class="form-group">
-						<label for="name">Password</label>
-						<input type="password" name="password" placeholder="Password" required class="form-control" />
+						<label for="user-password-update">Password</label>
+						<input type="password" name="user-password-update" placeholder="Password" required class="form-control" />
 					</div>
 
 					<div class="form-group">
-						<label for="name">Confirm Password</label>
-						<input type="password" name="cpassword" placeholder="Confirm Password" required class="form-control" />
+						<label for="user-cpassword-update">Confirm Password</label>
+						<input type="password" name="user-cpassword-update" placeholder="Confirm Password" required class="form-control" />
 					</div>
 
 					<div class="form-group">
@@ -136,6 +153,13 @@
 				</fieldset>
 			</form>
 			<!--15.display message -->
+			<?php
+                if(isset($error_message)) {
+                    echo '<span class="text-danger">' . $error_message . '</span>';
+                } elseif(isset($success_message)) {
+                    echo '<span class="text-success">' . $success_message . '</span>';
+                }
+            ?>
 
 		</div>
 	</div>

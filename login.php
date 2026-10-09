@@ -12,25 +12,30 @@
 		$user_password = mysqli_real_escape_string($conn, $_POST['user-password']);
 
 		//4.5) เช็คว่ามีผู้ใช้อยู่ในฐานข้อมูลไหม (check if user exists in database)
-		$SQL = "SELECT * FROM users WHERE user_email='$user_email' AND user_password=" . md5($user_password) . "";
+		$SQL = "SELECT * FROM users WHERE user_email='$user_email' AND user_password='" . md5($user_password) . "'";
 		// ดำเนินการ query (execute the query)
 		$result = mysqli_query($conn, $SQL);
 
 		//4.6) ถ้ามีผู้ใช้อยู่จริง ให้เริ่ม session และเปลี่ยนเส้นทางไปยัง index.php
 		// แปลง Result Set เป็น Array และตรวจสอบว่ามีข้อมูลแถว (row) อยู่ไหม
-		if($row = mysqli_query($conn, $SQL)) {
+		if($row = mysqli_fetch_array($result)) {
 			// ถ้ามีผู้ใช้อยู่ในระบบ ให้เริ่ม session
 			session_start();
-			$_SESSION['session_user_id'] = $row['user_id'];
-			$_SESSION['session_user_name'] = $row['user_name'];
-			// เปลี่ยนเส้นทางไปที่ index.php
-			header("Location: index.php");
-			exit();
+			if ($row['user_type'] == 'A') {
+                $_SESSION['session_admin_name'] = $row['user_name'];
+                header("Location: show_user.php");
+                exit();
+            } else {
+                $_SESSION['session_user_id'] = $row['user_id'];
+                $_SESSION['session_user_name'] = $row['user_name'];
+                // เปลี่ยนเส้นทางไปที่ index.php
+                header("Location: index.php");
+                exit();
+            }
 		} else {
 			$login_error = "Invalid email or password.";
 		}
 	}
-
 ?>
 
 <!DOCTYPE html>
@@ -73,13 +78,13 @@
 					<legend>Login</legend>
 
 					<div class="form-group">
-						<label for="name">Email</label>
-						<input type="text" name="email" placeholder="Your Email" required class="form-control" />
+						<label for="user-email">Email</label>
+						<input type="text" name="user-email" placeholder="Your Email" required class="form-control" />
 					</div>
 
 					<div class="form-group">
-						<label for="name">Password</label>
-						<input type="password" name="password" placeholder="Your Password" required class="form-control" />
+						<label for="user-password">Password</label>
+						<input type="password" name="user-password" placeholder="Your Password" required class="form-control" />
 					</div>
 
 					<div class="form-group">

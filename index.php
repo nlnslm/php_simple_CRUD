@@ -1,6 +1,11 @@
 <?php
 		session_start();
 		include_once 'dbconnect.php';
+
+		if (!isset($_SESSION['session_user_id'])) {
+			header("Location: login.php");
+			exit();
+		}
 ?>
 
 <!DOCTYPE html>
@@ -26,12 +31,29 @@
 		<div class="collapse navbar-collapse" id="navbar1">
 			<ul class="nav navbar-nav navbar-right">
 				<!--6.if already logged in, change menu items -->
+				<?php if (isset($_SESSION['session_user_id'])): ?>
+					<li><a href="admin_login.php">Admin</a></li>
+					<li><span class="navbar-text">Hello, <?php echo $_SESSION['session_user_name']; ?></span></li>
+					<li><a href="logout.php">Logout</a></li>
+				<?php else: ?>
 					<li><a href="login.php">Login</a></li>
 					<li><a href="register.php">Sign Up</a></li>
 					<li><a href="admin_login.php">Admin</a></li>
+				<?php endif; ?>
 			</ul>
 		</div>
 	</div>
 </nav>
+
+<div class="container text-center" style="margin-top: 50px;">
+	<div class="jumbotron">
+		<h2>Hello, <?php echo $_SESSION['session_user_name']; ?>!</h2>
+		<p>You are logged in as a User.</p>
+		<p>
+			<a href="admin_login.php" class="btn btn-primary">Go to Admin Login</a>
+			<a href="logout.php" class="btn btn-default">Logout</a>
+		</p>
+	</div>
+</div>
 </body>
 </html>

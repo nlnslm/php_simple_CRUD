@@ -11,7 +11,7 @@
 
 		//7.4) เช็คว่ามี admin อยู่ในฐานข้อมูลไหม
 		$SQL = "SELECT * FROM users WHERE user_name='$admin_name' 
-		AND user_password=" . md5($admin_password) . " AND user_type='A'";
+		AND user_password='" . md5($admin_password) . "' AND user_type='A'";
 		// ดำเนินการ query (exercute the query)
 		$result = mysqli_query($conn, $SQL);
 
@@ -69,13 +69,13 @@
 					<legend>Login</legend>
 
 					<div class="form-group">
-						<label for="name">Admin Name</label>
-						<input type="text" name="admin_name" placeholder="Admin Name" required class="form-control" />
+						<label for="admin-name">Admin Name</label>
+						<input type="text" name="admin-name" placeholder="Admin Name" required class="form-control" />
 					</div>
 
 					<div class="form-group">
-						<label for="name">Password</label>
-						<input type="password" name="password" placeholder="Your Password" required class="form-control" />
+						<label for="admin-password">Password</label>
+						<input type="password" name="admin-password" placeholder="Your Password" required class="form-control" />
 					</div>
 
 					<div class="form-group">
